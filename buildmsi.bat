@@ -64,6 +64,8 @@ call :begin_feature main Main
 call :add_component main kicad
 call :end_feature
 
+call :copy_dlls
+
 call :begin_cabinet x86
 for %%f in (x86\_install\bin\*.exe)     do call :add_file %%f main
 for %%f in (x86\_install\bin\*.kiface)  do call :add_file %%f main
@@ -95,6 +97,15 @@ rem msiinfo %output% -q
 msiinfo %output% -g 405
 msiinfo %output% -w 2
 msiinfo %output% -u 2
+
+exit /b
+
+REM ============================================================================
+REM copy_dlls
+REM ============================================================================
+:copy_dlls
+
+copy /b /y x86\dll\* x86\_install\bin\
 
 exit /b
 
