@@ -4,9 +4,11 @@ REM information
 
 set output=kicad.msi
 
-set product_name=KiCad nightly
-set product_manufacturer=The Kicad Community
-set product_code={BFA000F2-107B-4002-BF83-538891C811A1}
+set product_name="KiCad nightly"
+set product_manufacturer="The Kicad Community"
+set product_version="0.0.0"
+set product_code="{BFA000F2-107B-4002-BF83-538891C811A1}"
+set upgrade_code="{CD9CEB98-6CB6-487D-9E43-DB4E096020E8}"
 
 REM Generate package code
 for /f %%i in ('uuidgen') do set package_code={%%i}
@@ -50,26 +52,26 @@ rem call :add_property ErrorDialog ErrorDlg
 call :add_property Manufacturer %product_manufacturer%
 call :add_property ProductCode %product_code%
 call :add_property ProductLanguage 1033
-call :add_property ProductName KiCad
-call :add_property ProductVersion 0.0.0
-call :add_property UpgradeCode {CD9CEB98-6CB6-487D-9E43-DB4E096020E8}
+call :add_property ProductName %product_name%
+call :add_property ProductVersion %product_version%
+call :add_property UpgradeCode %upgrade_code%
 
 call :setup_sequences
 
-call :add_directory TARGETDIR SourceDir
-call :add_directory ProgramFilesFolder . TARGETDIR
-call :add_directory kicad "%product_name%" ProgramFilesFolder
+call :add_directory TARGETDIR "SourceDir"
+call :add_directory ProgramFilesFolder "." "TARGETDIR"
+call :add_directory kicad %product_name% "ProgramFilesFolder"
 
-call :begin_feature main Main
+call :begin_feature main "Main"
 call :add_component main kicad
 call :end_feature
 
 call :copy_dlls
 
 call :begin_cabinet x86
-for %%f in (x86\_install\bin\*.exe)     do call :add_file %%f main
-for %%f in (x86\_install\bin\*.kiface)  do call :add_file %%f main
-for %%f in (x86\_install\bin\*.dll.*)   do call :add_file %%f main
+for %%f in (x86\_install\bin\*.exe)     do call :add_file "%%f" main
+for %%f in (x86\_install\bin\*.kiface)  do call :add_file "%%f" main
+for %%f in (x86\_install\bin\*.dll.*)   do call :add_file "%%f" main
 call :end_cabinet
 
 call :run_makecab
@@ -86,10 +88,10 @@ REM ============================================================================
 
 msiinfo %output% -c 1252
 msiinfo %output% -t "Installation Database"
-msiinfo %output% -j "%product_name%"
-msiinfo %output% -a "%product_manufacturer%"
+msiinfo %output% -j %product_name%
+msiinfo %output% -a %product_manufacturer%
 msiinfo %output% -k Installer
-msiinfo %output% -o "This installer database contains the logic and data required to install %product_name%."
+msiinfo %output% -o "This installer database contains the logic and data required to install %product_name:"=%."
 msiinfo %output% -p Intel;1033
 msiinfo %output% -v %package_code%
 rem msiinfo %output% -r
@@ -316,7 +318,7 @@ REM ============================================================================
 REM add_property <name> <value>
 REM ============================================================================
 :add_property
-(echo.%1	%2) >>msi\Property.idt
+(echo.%1	%~2) >>msi\Property.idt
 
 exit /b
 
@@ -325,7 +327,7 @@ REM add_directory <name> <dir> <parent>
 REM ============================================================================
 :add_directory
 
-(echo.%1	%3	%~2) >>msi\Directory.idt
+(echo.%1	%~3	%~2) >>msi\Directory.idt
 
 exit /b
 
@@ -336,7 +338,7 @@ REM ============================================================================
 
 set _feat_name=%1
 
-(echo.%1		%2		1	1		0) >>msi\Feature.idt
+(echo.%1		%~2		1	1		0) >>msi\Feature.idt
 
 exit /b
 
@@ -350,7 +352,7 @@ REM ============================================================================
 REM add_component <name> <dir>
 REM ============================================================================
 :add_component
-(echo.%1		%2	0		) >>msi\Component.idt
+(echo.%1		%~2	0		) >>msi\Component.idt
 (echo.%_feat_name%	%1) >>msi\FeatureComponents.idt
 
 exit /b
@@ -362,12 +364,12 @@ REM ============================================================================
 
 set /a _file_seq=%_file_seq%+1
 
-set _file_id=%1
+set _file_id=%~1
 set _file_id=%_file_id:\_install=%
 set _file_id=%_file_id:\=_%
 set _file_id=%_file_id:-=_%
 
-copy %1 files\%_file_id%
+copy "%1" files\%_file_id%
 
 if %~nx1==%~snx1 (set _file_name="%~nx1") else (set _file_name="%~snx1^|%~nx1")
 
