@@ -61,9 +61,10 @@ call :setup_sequences
 call :add_directory TARGETDIR "SourceDir"
 call :add_directory ProgramFilesFolder "." "TARGETDIR"
 call :add_directory kicad %product_name% "ProgramFilesFolder"
+call :add_directory bin "bin" kicad
 
 call :begin_feature main "Main"
-call :add_component main kicad
+call :add_component main bin
 call :end_feature
 
 call :copy_dlls
